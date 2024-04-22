@@ -18,12 +18,13 @@ function initialise() {
 
 function main() {
   const newIndex = prompt("Where to place your turn?");
-  if (!board.bitboard & Board.TurnMask) {
-    board.setCell(parseInt(newIndex), Board.Crosses);
-  } else {
+  if (board.bitboard & Board.TurnMask) {
     board.setCell(parseInt(newIndex), Board.Naughts);
+  } else {
+    board.setCell(parseInt(newIndex), Board.Crosses);
   }
 
+  board.alternateTurn();
   board.display();
   if (board.bitboard & Board.WinMask) return;
   main();
