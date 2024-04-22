@@ -66,4 +66,8 @@ class Board {
   alternateTurn() {
     this.bitboard ^= Board.TurnMask;
   }
+
+  makeTurn(index) {
+    
+  }
 }
