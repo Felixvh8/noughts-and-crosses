@@ -31,14 +31,28 @@ h2 {
 }
 
 #gameDiv {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-content: space-between;
+  justify-content: space-between;
+  position: relative;
+  margin: auto;
   background-color: black;
   display: flex;
+  padding: 0px;
+  width: 320px;
+  height: 320px;
 }
 
 #main {
   background-color: antiquewhite;
+  padding: 25px;
 }
 
 .cell {
   background-color: antiquewhite;
+  display: inline-block;
+  width: 100px;
+  height: 100px;
 }
