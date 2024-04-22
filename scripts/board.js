@@ -59,7 +59,11 @@ class Board {
     this.bitboard |= 1 << (player + index);
   }
 
-  unsetCell(index) {
-    this.bitboard &= ~(1 << index);
+  unsetCell(index, player) {
+    this.bitboard &= ~(1 << (player + index));
+  }
+
+  alternateTurn() {
+    this.bitboard ^= 1;
   }
 }
