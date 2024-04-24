@@ -49,6 +49,11 @@ class Board {
       ---+---+---
        ${grid[6]} | ${grid[7]} | ${grid[8]}
     `);
+
+    for (let i = 0; i < grid.length; i++) {
+      let text = document.getElementById(`cell${i}`);
+      text.innerHTML = grid[i];
+    }
   }
 
   printBitboard() {
@@ -56,7 +61,14 @@ class Board {
   }
 
   setCell(index, player) {
-    this.bitboard |= 1 << (player + index);
+    let binaryRepresentation = 1 << (player + index);
+    let oppositionRepresentation = player == Board.Naughts ? 1 << (Board.Crosses + index) : 1 << (Board.Naughts + index);
+
+    // Doesn't allow setting of bitboard if there is a symbol already there
+    if (this.bitboard & binaryRepresentation || this.bitboard & oppositionRepresentation) return;
+
+    this.bitboard |= binaryRepresentation;
+    this.alternateTurn();
   }
 
   unsetCell(index, player) {
@@ -68,6 +80,8 @@ class Board {
   }
 
   makeTurn(index) {
-    
+    let player = this.bitboard & Board.TurnMask ? Board.Naughts : Board.Crosses;
+    this.setCell(index, player);
+    this.display();
   }
 }

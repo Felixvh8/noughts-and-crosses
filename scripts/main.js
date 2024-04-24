@@ -31,11 +31,11 @@ function initialise() {
   board = new Board();
   board.display();
 
-  main();
+  //main();
 }
 
 function main() {
-  //const newIndex = prompt("Where to place your turn?");
+  const newIndex = prompt("Where to place your turn?");
   if (board.bitboard & Board.TurnMask) {
     board.setCell(parseInt(newIndex), Board.Naughts);
   } else {
