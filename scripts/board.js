@@ -51,7 +51,7 @@ class Board {
     `);
 
     for (let i = 0; i < grid.length; i++) {
-      let text = document.getElementById(`cell${i}`);
+      let text = document.getElementById(`cellText${i}`);
       text.innerHTML = grid[i];
     }
   }
