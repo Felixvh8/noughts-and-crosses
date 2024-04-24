@@ -39,7 +39,7 @@ class Board {
     return grid;
   }
 
-  // Displays the bitboard as a grid (ugly code for now)
+  // Displays the bitboard as a grid
   display() {
     let grid = this.toGrid();
     console.log(` 
@@ -56,6 +56,7 @@ class Board {
     }
   }
 
+  // Logs the bitboard in the console as a string to visualise the board
   printBitboard() {
     console.log(this.bitboard.toString(2).padStart(BOARD_SIZE, '0'));
   }
