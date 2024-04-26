@@ -5,14 +5,24 @@ class Board {
   static Crosses = 1;
   
   // Bitwise masks
-  static TurnMask = 0b000000000000000000001;
-  static WinMask = 0b110000000000000000000;
-  static CrossesMask = 0b000000000001111111110;
-  static NaughtsMask = 0b001111111110000000000;
+  static TurnMask = 0b00000000000000000001;
+  static NaughtsWinMask = 0b10000000000000000000;
+  static CrossesMask = 0b00000000001111111110;
+  static NaughtsMask = 0b01111111110000000000;
+  static WinConditionMasks = [
+    0b100100100,
+    0b010010010,
+    0b001001001,
+    0b111000000,
+    0b000111000,
+    0b000000111,
+    0b100010001,
+    0b001010100
+  ];
 
   constructor() {
     // Refer to masks to determine what each bit represents
-    this.bitboard = 0b000000000000000000000;
+    this.bitboard = 0b00000000000000000000;
   }
 
   // Converts the bitboard to a visual grid (array)
@@ -57,8 +67,8 @@ class Board {
   }
 
   // Logs the bitboard in the console as a string to visualise the board
-  printBitboard() {
-    console.log(this.bitboard.toString(2).padStart(BOARD_SIZE, '0'));
+  printBitboard(bitboard) {
+    console.log(bitboard.toString(2).padStart(BOARD_SIZE, '0'));
   }
 
   setCell(index, player) {
@@ -84,5 +94,21 @@ class Board {
     let player = this.bitboard & Board.TurnMask ? Board.Naughts : Board.Crosses;
     this.setCell(index, player);
     this.display();
+    this.checkWinCondition(player)
+  }
+
+  // Checks for a win condition 
+  // If true, the left most bit will be 1 and the bit next to it will represent who won
+  checkWinCondition(player) {
+    // Player mask
+    let playerMask = player == Board.Naughts ? Board.NaughtsMask : Board.CrossesMask;
+    let playerBoard = (this.bitboard & playerMask) >> player;
+
+    for (const mask of Board.WinConditionMasks) {
+      if (Math.round(mask & playerBoard) == Math.round(mask)) {
+        console.log("You WIN!");
+        break;
+      };
+    }
   }
 }
