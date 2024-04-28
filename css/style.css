@@ -64,3 +64,9 @@ h2 {
   margin-top: 21px;
   font-family: Arial, Helvetica, sans-serif;
 }
+
+#twistButton {
+  margin: auto;
+  margin-top: 20px;
+  position: relative;
+}

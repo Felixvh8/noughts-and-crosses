@@ -1,12 +1,12 @@
 class Board {
-  // static variables to help represent game state
+  // Static variables to help represent game state
   // Allow for easy padding offsets
   static Naughts = 10;
   static Crosses = 1;
   
-  // Bitwise masks
+  // Bitwise masks for game state checking
   static TurnMask = 0b00000000000000000001;
-  static NaughtsWinMask = 0b10000000000000000000;
+  static WinMask = 0b10000000000000000000;
   static CrossesMask = 0b00000000001111111110;
   static NaughtsMask = 0b01111111110000000000;
   static WinConditionMasks = [
@@ -23,13 +23,16 @@ class Board {
   constructor() {
     // Refer to masks to determine what each bit represents
     this.bitboard = 0b00000000000000000000;
+
+    // The 3 move rule
+    this.twist = false;
   }
 
   // Converts the bitboard to a visual grid (array)
   toGrid() {
     let grid = [];
 
-    // Separates out the the boards from main bitboard
+    // Separates out the player boards from main bitboard
     let crossesBoard = (this.bitboard & Board.CrossesMask) >> Board.Crosses;
     let naughtsBoard = (this.bitboard & Board.NaughtsMask) >> Board.Naughts;
 
@@ -72,6 +75,9 @@ class Board {
   }
 
   setCell(index, player) {
+    // Prevents cells from being changed if the game has been won
+    if (this.bitboard & Board.WinMask) return;
+
     let binaryRepresentation = 1 << (player + index);
     let oppositionRepresentation = player == Board.Naughts ? 1 << (Board.Crosses + index) : 1 << (Board.Naughts + index);
 
@@ -106,6 +112,7 @@ class Board {
 
     for (const mask of Board.WinConditionMasks) {
       if (Math.round(mask & playerBoard) == Math.round(mask)) {
+        this.bitboard |= Board.WinMask;
         console.log("You WIN!");
         break;
       };
