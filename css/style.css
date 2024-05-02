@@ -74,6 +74,11 @@ button {
   padding: 2px;
 }
 
+button:hover {
+  background-color: aliceblue;
+  border-color: blue;
+}
+
 #buttonsDiv {
   position: absolute;
   width: 150px;
