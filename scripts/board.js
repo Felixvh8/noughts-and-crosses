@@ -1,14 +1,14 @@
 class Board {
   // Static variables to help represent game state
   // Allow for easy padding offsets
-  static Naughts = 10;
+  static Noughts = 10;
   static Crosses = 1;
   
   // Bitwise masks for game state checking
   static TurnMask = 0b00000000000000000001;
   static WinMask = 0b10000000000000000000;
   static CrossesMask = 0b00000000001111111110;
-  static NaughtsMask = 0b01111111110000000000;
+  static NoughtsMask = 0b01111111110000000000;
   static WinConditionMasks = [
     0b100100100,
     0b010010010,
@@ -26,6 +26,7 @@ class Board {
 
     // The 3 move rule
     this.twist = false;
+    this.previousMoves = [];
   }
 
   // Converts the bitboard to a visual grid (array)
@@ -34,7 +35,7 @@ class Board {
 
     // Separates out the player boards from main bitboard
     let crossesBoard = (this.bitboard & Board.CrossesMask) >> Board.Crosses;
-    let naughtsBoard = (this.bitboard & Board.NaughtsMask) >> Board.Naughts;
+    let noughtsBoard = (this.bitboard & Board.NoughtsMask) >> Board.Noughts;
 
     for (let index = 0; index < BOARD_SIZE; index++) {
       // Checks the bitboards
@@ -42,7 +43,7 @@ class Board {
         grid.push('X');
         continue;
       }
-      if (naughtsBoard & (1 << index)) {
+      if (noughtsBoard & (1 << index)) {
         grid.push('O');
         continue;
       }
@@ -79,11 +80,12 @@ class Board {
     if (this.bitboard & Board.WinMask) return;
 
     let binaryRepresentation = 1 << (player + index);
-    let oppositionRepresentation = player == Board.Naughts ? 1 << (Board.Crosses + index) : 1 << (Board.Naughts + index);
+    let oppositionRepresentation = player == Board.Noughts ? 1 << (Board.Crosses + index) : 1 << (Board.Noughts + index);
 
     // Doesn't allow setting of bitboard if there is a symbol already there
     if (this.bitboard & binaryRepresentation || this.bitboard & oppositionRepresentation) return;
 
+    this.previousMoves.push(binaryRepresentation);
     this.bitboard |= binaryRepresentation;
     this.alternateTurn();
   }
@@ -97,7 +99,7 @@ class Board {
   }
 
   makeTurn(index) {
-    let player = this.bitboard & Board.TurnMask ? Board.Naughts : Board.Crosses;
+    let player = this.bitboard & Board.TurnMask ? Board.Noughts : Board.Crosses;
     this.setCell(index, player);
     this.display();
     this.checkWinCondition(player)
@@ -107,7 +109,7 @@ class Board {
   // If true, the left most bit will be 1 and the bit next to it will represent who won
   checkWinCondition(player) {
     // Player mask
-    let playerMask = player == Board.Naughts ? Board.NaughtsMask : Board.CrossesMask;
+    let playerMask = player == Board.Noughts ? Board.NoughtsMask : Board.CrossesMask;
     let playerBoard = (this.bitboard & playerMask) >> player;
 
     for (const mask of Board.WinConditionMasks) {
