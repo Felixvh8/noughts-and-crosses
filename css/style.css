@@ -48,6 +48,7 @@ h2 {
 #main {
   background-color: beige;
   padding: 25px;
+  min-height: calc(100vh - 181.83px);
 }
 
 .cell {
