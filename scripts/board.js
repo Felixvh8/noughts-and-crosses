@@ -27,6 +27,9 @@ class Board {
     // The 3 move rule
     this.twist = false;
     this.previousMoves = [];
+
+    // Displays the board when initialised
+    this.display();
   }
 
   // Converts the bitboard to a visual grid (array)
@@ -87,6 +90,11 @@ class Board {
 
     this.previousMoves.push(binaryRepresentation);
     this.bitboard |= binaryRepresentation;
+
+    if (this.previousMoves.length == 7) {
+      let moveToDelete = this.previousMoves.shift();
+      if (this.twist == true) this.bitboard ^= moveToDelete;
+    }
     this.alternateTurn();
   }
 
@@ -119,5 +127,10 @@ class Board {
         break;
       };
     }
+  }
+
+  toggleThreeMoveRule() {
+    this.twist = this.twist ? false : true;
+    document.getElementById("twistButton").innerHTML = this.twist ? "Three Move Rule: On" : "Three Move Rule: Off";
   }
 }
