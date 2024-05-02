@@ -22,7 +22,10 @@
 
     <div id="main">
       <div id="gameDiv"></div>
-      <button id="twistButton" onclick="board.toggleThreeMoveRule()">Three Move Rule: Off</button>
+      <div id="buttonsDiv">
+        <button id="newGameButton" onclick="board = new Board(board.twist);">New Game</button>
+        <button id="twistButton" onclick="board.toggleThreeMoveRule();">Three Move Rule: Off</button>
+      </div>
     </div>
 
     <footer>

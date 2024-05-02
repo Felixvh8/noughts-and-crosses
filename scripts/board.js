@@ -20,12 +20,12 @@ class Board {
     0b001010100
   ];
 
-  constructor() {
+  constructor(twist = false) {
     // Refer to masks to determine what each bit represents
     this.bitboard = 0b00000000000000000000;
 
     // The 3 move rule
-    this.twist = false;
+    this.twist = twist;
     this.previousMoves = [];
 
     // Displays the board when initialised

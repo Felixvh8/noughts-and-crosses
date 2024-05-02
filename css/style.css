@@ -65,8 +65,17 @@ h2 {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-#twistButton {
-  margin: auto;
-  margin-top: 20px;
-  position: relative;
+button {
+  width: 150px;
+  margin-top: 10px;
+  background-color: azure;
+  border-radius: 3px;
+  padding: 2px;
+}
+
+#buttonsDiv {
+  position: absolute;
+  width: 150px;
+  left: 25px;
+  top: 100px;
 }
