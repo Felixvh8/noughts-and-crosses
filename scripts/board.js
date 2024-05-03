@@ -106,11 +106,15 @@ class Board {
     this.bitboard ^= Board.TurnMask;
   }
 
-  makeTurn(index) {
+  makeMove(index) {
     let player = this.bitboard & Board.TurnMask ? Board.Noughts : Board.Crosses;
     this.setCell(index, player);
     this.display();
     this.checkWinCondition(player)
+  }
+
+  unmakeMove() {
+    
   }
 
   // Checks for a win condition 

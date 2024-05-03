@@ -13,7 +13,7 @@ function initialise() {
     // Div element (cell)
     let div = document.createElement('div');
     div.addEventListener('click', () => {
-      board.makeTurn(i);
+      board.makeMove(i);
     });
     div.id = `cell${i}`;
     div.classList.add('cell');
