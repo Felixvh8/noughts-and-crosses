@@ -20,7 +20,7 @@ class Board {
     0b001010100
   ];
 
-  constructor(twist = false) {
+  constructor(twist = true) {
     // Refer to masks to determine what each bit represents
     this.bitboard = 0b00000000000000000000;
 
@@ -91,8 +91,8 @@ class Board {
     this.previousMoves.push(binaryRepresentation);
     this.bitboard |= binaryRepresentation;
 
-    if (this.previousMoves.length == 7) {
-      let moveToDelete = this.previousMoves.shift();
+    if (this.previousMoves.length > 6) {
+      let moveToDelete = this.previousMoves[this.previousMoves.length - 7];
       if (this.twist == true) this.bitboard ^= moveToDelete;
     }
     this.alternateTurn();
@@ -114,7 +114,13 @@ class Board {
   }
 
   unmakeMove() {
-    
+    if (this.previousMoves == []) return;
+
+    if (this.bitboard & Board.WinMask) this.bitboard ^= Board.WinMask;
+    let moveToUndo = this.previousMoves.pop();
+    this.bitboard ^= moveToUndo;
+    this.alternateTurn();
+    this.display();
   }
 
   // Checks for a win condition 
