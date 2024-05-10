@@ -1,5 +1,7 @@
 // Initialising variables and constants
 const BOARD_SIZE = 9;
+const AI_FLAG = "AINoughtsAndCrosses";
+let aiStatus = localStorage.getItem(AI_FLAG);
 let board;
 
 // Calls the main function when the window loads
@@ -30,4 +32,17 @@ function initialise() {
 
   board = new Board();
   board.display();
+
+  // testEquals(9, Robot.Perft, 2);
+  let result = Robot.Perft(2);
+  console.log(result);
+}
+
+function testEquals(expectedOutput, functionToTest, argument) {
+  let result = functionToTest(argument);
+  console.log(`
+    Expected to return ${expectedOutput}. Returned ${result}
+  `);
+
+  return result == expectedOutput;
 }

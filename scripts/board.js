@@ -28,8 +28,12 @@ class Board {
     this.twist = twist;
     this.previousMoves = [];
 
+    // Ai parameters
+    this.aiActive;
+
     // Displays the board when initialised
     this.display();
+    this.setAIButton();
   }
 
   // Converts the bitboard to a visual grid (array)
@@ -59,6 +63,7 @@ class Board {
   // Displays the bitboard as a grid
   display() {
     let grid = this.toGrid();
+    /*
     console.log(` 
        ${grid[0]} | ${grid[1]} | ${grid[2]}
       ---+---+---
@@ -66,6 +71,8 @@ class Board {
       ---+---+---
        ${grid[6]} | ${grid[7]} | ${grid[8]}
     `);
+    */
+    
 
     for (let i = 0; i < grid.length; i++) {
       let text = document.getElementById(`cellText${i}`);
@@ -74,8 +81,8 @@ class Board {
   }
 
   // Logs the bitboard in the console as a string to visualise the board
-  printBitboard(bitboard) {
-    console.log(bitboard.toString(2).padStart(BOARD_SIZE, '0'));
+  printBitboard(bitboard, size = BOARD_SIZE) {
+    console.log(bitboard.toString(2).padStart(size, '0'));
   }
 
   setCell(index, player) {
@@ -110,7 +117,7 @@ class Board {
     let player = this.bitboard & Board.TurnMask ? Board.Noughts : Board.Crosses;
     this.setCell(index, player);
     this.display();
-    this.checkWinCondition(player)
+    this.checkWinCondition(player);
   }
 
   unmakeMove() {
@@ -142,5 +149,23 @@ class Board {
   toggleThreeMoveRule() {
     this.twist = this.twist ? false : true;
     document.getElementById("twistButton").innerHTML = this.twist ? "Three Move Rule: On" : "Three Move Rule: Off";
+  }
+
+  setAIButton(clicked = false) {
+    let aiButton = document.getElementById("aiActivation");
+    let aiStatusString = aiStatus;
+
+    // If the button is clicked then toggle
+    // Needed to set the button when the page is loaded
+    if (clicked) {
+      aiStatusString = aiStatusString == "On" ? "Off" : "On";
+      board = new Board(this.twist);
+    }
+
+    this.aiActive = aiStatusString == "On" ? true : false;
+
+    localStorage.setItem(AI_FLAG, aiStatusString);
+    aiStatus = localStorage.getItem(AI_FLAG);
+    aiButton.innerHTML = `AI ${aiStatus}`;
   }
 }
