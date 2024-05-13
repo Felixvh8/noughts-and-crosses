@@ -20,7 +20,7 @@ class Board {
     0b001010100
   ];
 
-  constructor(twist = true) {
+  constructor(twist = true, aiActive) {
     // Refer to masks to determine what each bit represents
     this.bitboard = 0b00000000000000000000;
 
@@ -28,8 +28,10 @@ class Board {
     this.twist = twist;
     this.previousMoves = [];
 
+    this.humanIsCrosses = true;
+
     // Ai parameters
-    this.aiActive;
+    this.aiActive = aiActive;
 
     // Displays the board when initialised
     this.display();
@@ -140,7 +142,6 @@ class Board {
     for (const mask of Board.WinConditionMasks) {
       if (Math.round(mask & playerBoard) == Math.round(mask)) {
         this.bitboard |= Board.WinMask;
-        console.log("You WIN!");
         break;
       };
     }
@@ -159,11 +160,10 @@ class Board {
     // Needed to set the button when the page is loaded
     if (clicked) {
       aiStatusString = aiStatusString == "On" ? "Off" : "On";
-      board = new Board(this.twist);
+      this.aiActive = aiStatusString == "On" ? true : false;
+      board = new Board(this.twist, this.aiActive);
     }
-
-    this.aiActive = aiStatusString == "On" ? true : false;
-
+    
     localStorage.setItem(AI_FLAG, aiStatusString);
     aiStatus = localStorage.getItem(AI_FLAG);
     aiButton.innerHTML = `AI ${aiStatus}`;

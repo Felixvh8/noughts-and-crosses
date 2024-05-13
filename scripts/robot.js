@@ -41,6 +41,16 @@ class Robot {
   }
 
   static Evaluate() {
+
+  }
+
+  static Search(depth) {
     
+  }
+
+  static MakeMove() {
+    let moves = Robot.GenerateMoves();
+    let index = Math.floor(moves.length * Math.random());
+    board.makeMove(moves[index]);
   }
 }
