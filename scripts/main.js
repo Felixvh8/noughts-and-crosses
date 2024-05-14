@@ -48,5 +48,11 @@ function end() {
   endTime = performance.now();
   let timeDiff = endTime - startTime; //in ms
   
-  return timeDiff + " milliseconds";
+  return Math.round(timeDiff) + " milliseconds";
+}
+
+function PerformanceSearch(depth = 1) {
+  start();
+  Robot.Search(depth);
+  return end();
 }
