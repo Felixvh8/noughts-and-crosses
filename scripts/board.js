@@ -125,6 +125,10 @@ class Board {
   unmakeMove() {
     if (this.previousMoves == []) return;
 
+    if (this.previousMoves.length > 6) {
+      this.reinstateDeletedMove(this.previousMoves[this.previousMoves.length - 7]);
+    }
+    
     if (this.bitboard & Board.WinMask) this.bitboard ^= Board.WinMask;
     let moveToUndo = this.previousMoves.pop();
     this.bitboard ^= moveToUndo;
@@ -132,19 +136,26 @@ class Board {
     this.display();
   }
 
+  reinstateDeletedMove(binaryRepresentation) {
+    this.bitboard |= binaryRepresentation;
+  }
+
   // Checks for a win condition 
   // If true, the left most bit will be 1 and the bit next to it will represent who won
-  checkWinCondition(player) {
+  checkWinCondition(player = false) {
     // Player mask
+    if (!player) player = board.bitboard & Board.TurnMask ? Board.Noughts : Board.Crosses;
     let playerMask = player == Board.Noughts ? Board.NoughtsMask : Board.CrossesMask;
     let playerBoard = (this.bitboard & playerMask) >> player;
 
     for (const mask of Board.WinConditionMasks) {
       if (Math.round(mask & playerBoard) == Math.round(mask)) {
         this.bitboard |= Board.WinMask;
-        break;
+        return true;
       };
     }
+
+    return false;
   }
 
   toggleThreeMoveRule() {

@@ -20,13 +20,14 @@ class Robot {
     return legalMoves;
   }
 
+  // Performance test for move generation
   static Perft(depth = 0) {
     let moves = this.GenerateMoves();
 
+    // Move generation shortcut to increase depth with less processing
     if (depth == 1) {
       return moves ? moves.length : 1;
     }
-
     if (board.bitboard & Board.WinMask) return 1;
 
     let numberOfPositions = 0;
@@ -41,15 +42,44 @@ class Robot {
   }
 
   static Evaluate() {
+    let player = board.bitboard & Board.TurnMask ? Board.Crosses : Board.Naughts;
+    let perspective = player == Board.Crosses ? 1 : -1;
 
+    if (this.bitboard & Board.WinMask) {
+      return 10000 * perspective;
+    }
+
+    return 0;
   }
 
-  static Search(depth) {
-    
+  static Search(depth = 0) {
+    let tempBitboard = board.bitboard;
+    if (depth == 0) {
+      return this.Evaluate();
+    }
+
+    let moves = this.GenerateMoves() || [];
+
+    // For draws (normal x and os) or wins (3 move rule)
+    if (moves.length == 0) {
+      return -10000;
+    }
+
+    let bestEvaluation = -100000;
+
+    for (const move of moves) {
+      board.makeMove(move);
+      let evaluation = -this.Search(depth - 1);
+      bestEvaluation = Math.max(bestEvaluation, evaluation);
+      board.unmakeMove();
+      //board.bitboard = tempBitboard;
+    }
+
+    return bestEvaluation;
   }
 
   static MakeMove() {
-    let moves = Robot.GenerateMoves();
+    let moves = Robot.GenerateMoves() || [];
     let index = Math.floor(moves.length * Math.random());
     board.makeMove(moves[index]);
   }
