@@ -49,11 +49,12 @@ class Robot {
       return 10000 * perspective;
     }
 
+    let evaluation = 0;
+
     return 0;
   }
 
-  static Search(depth = 0) {
-    let tempBitboard = board.bitboard;
+  static Search(depth = 0, alpha = Number.NEGATIVE_INFINITY, beta = Number.POSITIVE_INFINITY) {
     if (depth == 0) {
       return this.Evaluate();
     }
@@ -65,17 +66,19 @@ class Robot {
       return -10000;
     }
 
-    let bestEvaluation = -100000;
-
     for (const move of moves) {
       board.makeMove(move);
-      let evaluation = -this.Search(depth - 1);
-      bestEvaluation = Math.max(bestEvaluation, evaluation);
+      let evaluation = -this.Search(depth - 1, -beta, -alpha);
       board.unmakeMove();
-      //board.bitboard = tempBitboard;
+      
+      // Move is too good, opponent will avoid this position
+      if (evaluation >= beta) {
+        return beta;
+      }
+      alpha = Math.max(alpha, evaluation);
     }
 
-    return bestEvaluation;
+    return alpha;
   }
 
   static MakeMove() {

@@ -53,6 +53,6 @@ function end() {
 
 function PerformanceSearch(depth = 1) {
   start();
-  Robot.Search(depth);
+  console.log("Evaluation: " + Robot.Search(depth));
   return end();
 }
