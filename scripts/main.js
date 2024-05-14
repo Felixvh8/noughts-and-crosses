@@ -39,3 +39,14 @@ function initialise() {
   board = new Board(true, aiStatusBool);
   board.display();
 }
+
+function start() {
+  startTime = performance.now();
+};
+
+function end() {
+  endTime = performance.now();
+  let timeDiff = endTime - startTime; //in ms
+  
+  return timeDiff + " milliseconds";
+}
