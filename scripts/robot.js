@@ -41,20 +41,35 @@ class Robot {
     return numberOfPositions;
   }
 
+  // Evaluates the position and returns the quantative value
   static Evaluate() {
     let player = board.bitboard & Board.TurnMask ? Board.Crosses : Board.Naughts;
     let perspective = player == Board.Crosses ? 1 : -1;
 
-    if (this.bitboard & Board.WinMask) {
-      return 10000 * perspective;
+    if (board.bitboard & Board.WinMask) {
+      return 9999 * perspective;
     }
 
     let evaluation = 0;
+    let playerBoard = player == Board.Crosses ? (board.bitboard & Board.CrossesMask) >> player : (board.bitboard & Board.NaughtsMask) >> player;
+    let opponentBoard = player == Board.Crosses ? (board.bitboard & Board.NaughtsMask) >> Board.Naughts : (board.bitboard & Board.CrossesMask) >> Board.Crosses;
 
-    return 0;
+    if (playerBoard & 0b000010000) {
+      evaluation -= 20;
+    } else if (opponentBoard & 0b000010000) {
+      evaluation += 20;
+    }
+
+    if (playerBoard & 0b101000101) {
+      evaluation -= 5;
+    } else if (opponentBoard & 0b101000101) {
+      evaluation += 5;
+    }
+
+    return evaluation;
   }
 
-  static Search(depth = 0, alpha = Number.NEGATIVE_INFINITY, beta = Number.POSITIVE_INFINITY) {
+  static Search(depth = 0, alpha = Number.NEGATIVE_INFINITY, beta = Number.POSITIVE_INFINITY, bestMove) {
     if (depth == 0) {
       return this.Evaluate();
     }
@@ -63,27 +78,36 @@ class Robot {
 
     // For draws (normal x and os) or wins (3 move rule)
     if (moves.length == 0) {
-      return -10000;
+      if (board.bitboard & Board.WinMask) return -9999 - depth;
+
+      return 0;
     }
+    
+    bestMove.best = moves[0];
 
     for (const move of moves) {
       board.makeMove(move);
-      let evaluation = -this.Search(depth - 1, -beta, -alpha);
+      let evaluation = -this.Search(depth - 1, -beta, -alpha, {best: 0});
       board.unmakeMove();
       
       // Move is too good, opponent will avoid this position
       if (evaluation >= beta) {
         return beta;
       }
-      alpha = Math.max(alpha, evaluation);
+      if (evaluation > alpha) {
+        alpha = evaluation;
+        bestMove.best = move;
+      }
     }
 
     return alpha;
   }
 
   static MakeMove() {
-    let moves = Robot.GenerateMoves() || [];
-    let index = Math.floor(moves.length * Math.random());
-    board.makeMove(moves[index]);
+    let bestMove = {
+      best: 0
+    };
+    console.log(Robot.Search(12, Number.NEGATIVE_INFINITY, Number.POSITIVE_INFINITY, bestMove));
+    board.makeMove(bestMove.best);
   }
 }
