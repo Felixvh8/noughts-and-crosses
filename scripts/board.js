@@ -20,7 +20,7 @@ class Board {
     0b001010100
   ];
 
-  constructor(twist = true) {
+  constructor(twist = true, aiActive) {
     // Refer to masks to determine what each bit represents
     this.bitboard = 0b00000000000000000000;
 
@@ -28,8 +28,14 @@ class Board {
     this.twist = twist;
     this.previousMoves = [];
 
+    this.humanIsCrosses = true;
+
+    // Ai parameters
+    this.aiActive = aiActive;
+
     // Displays the board when initialised
     this.display();
+    this.setAIButton();
   }
 
   // Converts the bitboard to a visual grid (array)
@@ -59,6 +65,7 @@ class Board {
   // Displays the bitboard as a grid
   display() {
     let grid = this.toGrid();
+    /*
     console.log(` 
        ${grid[0]} | ${grid[1]} | ${grid[2]}
       ---+---+---
@@ -66,6 +73,8 @@ class Board {
       ---+---+---
        ${grid[6]} | ${grid[7]} | ${grid[8]}
     `);
+    */
+    
 
     for (let i = 0; i < grid.length; i++) {
       let text = document.getElementById(`cellText${i}`);
@@ -74,8 +83,8 @@ class Board {
   }
 
   // Logs the bitboard in the console as a string to visualise the board
-  printBitboard(bitboard) {
-    console.log(bitboard.toString(2).padStart(BOARD_SIZE, '0'));
+  printBitboard(bitboard, size = BOARD_SIZE) {
+    console.log(bitboard.toString(2).padStart(size, '0'));
   }
 
   setCell(index, player) {
@@ -110,12 +119,16 @@ class Board {
     let player = this.bitboard & Board.TurnMask ? Board.Noughts : Board.Crosses;
     this.setCell(index, player);
     this.display();
-    this.checkWinCondition(player)
+    this.checkWinCondition(player);
   }
 
   unmakeMove() {
     if (this.previousMoves == []) return;
 
+    if (this.previousMoves.length > 6) {
+      this.reinstateDeletedMove(this.previousMoves[this.previousMoves.length - 7]);
+    }
+    
     if (this.bitboard & Board.WinMask) this.bitboard ^= Board.WinMask;
     let moveToUndo = this.previousMoves.pop();
     this.bitboard ^= moveToUndo;
@@ -123,24 +136,47 @@ class Board {
     this.display();
   }
 
+  reinstateDeletedMove(binaryRepresentation) {
+    this.bitboard |= binaryRepresentation;
+  }
+
   // Checks for a win condition 
   // If true, the left most bit will be 1 and the bit next to it will represent who won
-  checkWinCondition(player) {
+  checkWinCondition(player = false) {
     // Player mask
+    if (!player) player = board.bitboard & Board.TurnMask ? Board.Noughts : Board.Crosses;
     let playerMask = player == Board.Noughts ? Board.NoughtsMask : Board.CrossesMask;
     let playerBoard = (this.bitboard & playerMask) >> player;
 
     for (const mask of Board.WinConditionMasks) {
       if (Math.round(mask & playerBoard) == Math.round(mask)) {
         this.bitboard |= Board.WinMask;
-        console.log("You WIN!");
-        break;
+        return true;
       };
     }
+
+    return false;
   }
 
   toggleThreeMoveRule() {
     this.twist = this.twist ? false : true;
     document.getElementById("twistButton").innerHTML = this.twist ? "Three Move Rule: On" : "Three Move Rule: Off";
+  }
+
+  setAIButton(clicked = false) {
+    let aiButton = document.getElementById("aiActivation");
+    let aiStatusString = aiStatus;
+
+    // If the button is clicked then toggle
+    // Needed to set the button when the page is loaded
+    if (clicked) {
+      aiStatusString = aiStatusString == "On" ? "Off" : "On";
+      this.aiActive = aiStatusString == "On" ? true : false;
+      board = new Board(this.twist, this.aiActive);
+    }
+    
+    localStorage.setItem(AI_FLAG, aiStatusString);
+    aiStatus = localStorage.getItem(AI_FLAG);
+    aiButton.innerHTML = `AI ${aiStatus}`;
   }
 }

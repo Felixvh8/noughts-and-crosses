@@ -7,6 +7,7 @@
     <!-- Javascript -->
     <script src="scripts/main.js"></script>
     <script src="scripts/board.js"></script>
+    <script src="scripts/robot.js"></script>
 
     <!-- Stylesheets -->
     <link type="text/css" rel="stylesheet" href="css/style.css">
@@ -23,9 +24,15 @@
     <div id="main">
       <div id="gameDiv"></div>
       <div id="buttonsDiv">
-        <button id="newGameButton" onclick="board = new Board(board.twist);">New Game</button>
+        <button id="newGameButton" onclick="board = new Board(board.twist, aiStatusBool);">New Game</button>
         <button id="twistButton" onclick="board.toggleThreeMoveRule();">Three Move Rule: On</button>
         <button id="unmakeMoveButton" onclick="board.unmakeMove();">Unmake Move</button>
+        <button id="aiActivation" onclick="board.setAIButton(true);">AI</button>
+        
+        <input type="checkbox" id="humanPlayerCrosses" name="humanPlayerCrosses">
+        <label for="humanPlayerCrosses"> Crosses is Ai</label><br>
+        <input type="checkbox" id="humanPlayerNaughts" name="humanPlayerNaughts">
+        <label for="humanPlayerNaughts"> Naughts is Ai</label><br>
       </div>
     </div>
 
